@@ -1,0 +1,28 @@
+Cerca i file delle ultime 24 ore 
+find /home/userlog/ -type f -name "*"`date -d '1 day ago' '+%Y%m%d'`"*" -exec gzip -f '{}' ';'
+
+
+Cerca tutti i file con estensione gzip e spostali su un altro server 
+find /home/userlog/ -type f -name "*.gz" -exec scp {} root@172.28.101.100:/mnt/cdr/snoopDRA \;
+
+
+Cancella/visualizza/gzippa i file più vecchi di quattro giorni
+ find /var/log/billing/jboss/*.log* -mtime +4 -exec ls {} \;
+find /var/log/billing/jboss/*.log* -mtime +4 -exec rm {} \;
+find /var/log/billing/jboss/*.log* -mtime +4 -exec gzip {} \;
+
+
+Trova e sposta
+find / -iname "*phpinfo.php" -exec mv {} /root/phpinfo \;
+
+
+Questo comando ti fa un tar di tutti i file del 2018    ( di solito genera un errore il comando, ma è normale ) 
+ find /home/supervisor/alerter/export/linkem.noverca.com -name 'linkem.noverca.com_2018*' -type f | tar -cf linkem201801.tar -T -
+
+
+
+Zippare lista grande
+
+find . -type f -name 'noitel.noverca.com_20151224174903_285.txt' -exec gzip  \{} \; 2>/dev/null
+find . -type f -name 'noitel.noverca.com_2015*' -exec gzip  \{} \; 2>/dev/null
+find /home/supervisor/alerter/export/noitel.noverca.com -name "*.gz" -type f | tar -cf allfiles.tar -T -
