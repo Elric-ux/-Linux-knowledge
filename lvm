@@ -1,0 +1,101 @@
+Physical Volume  (pv) -----> pvcreate
+
+
+ e` un disco fisso o una  sua partizione quindi /dev/sda oppure /dev/sda1  serve ad inizializzare il disco o la su partizione per essere pronta all’utilizzo di LVM
+
+
+Volume Group (vg)   -----> vgcreate
+
+Un insieme di volumi fisici usati come un unico volume di archiviazione(come un disco)..Si pensi ai gruppi di volumi come agli hard drive. è praticamente un contenitore che raggruppa tutti i dischi inizializzati in precedenza è come se venisse visto un unico disco ( SI è POSSIBILE CREARE PIU VOLUME GROUP )
+
+ 
+
+Logical Volume (lv)   -----> lvcreate
+
+
+ sono le aree finali che  conterranno i nostri dati, e vengono creati "ritagliando"  spazio da un vg; qui dentro verranno creati effettivamente i filesystem si pensi a LV come a delle semplici partizioni
+
+ 
+
+
+
+ 
+
+Physical extent (PE)): Una piccola porzione di un disco (solitamente 4MB) che può essere assegnata ad un volume logico. Si pensi alle estensioni fisiche come porzioni di dischi che possono essere allocate ad una qualsiasi partizione.
+
+
+ 
+
+Logical Extend (LE)
+
+seppure difficilmente avremo a che farci direttamente, i LE sono i pezzetti in cui viene suddiviso il LV in modo di poterlo allocare tra i vari PE disponibili al VG.
+
+​
+
+​
+
+​
+
+Prima di creare un LVM va inizalizzato il disco con gdisk o fdisk per dargli l'etichetta lvm 
+
+​
+
+​
+
+Installazione -  yum install -y lvm2*    
+
+​
+
+Esempio Base LVM
+
+​
+
+pvcreate /dev/sdc1
+
+vgcreate pool /dev/sdc1
+
+lvcreate -n partizione1 -L 1G pool
+
+oppure
+
+lvcreate -n partizione1  -l 100%free
+
+mkfs.ext4 /dev/pool/partizione1
+
+​
+
+​
+
+​
+
+Estendere il disco 
+
+​
+
+lvextend -l +100%FREE -r /dev/volgroup/logvol
+
+lvextend -L +100M -r /dev/vgdata/lvdata ( estende il disco di 100MB ) 
+
+lvextend -l +100%FREE -r /dev/vg_rhcsa/data
+
+​
+
+​
+
+Ridurre il disco 
+
+​
+
+lvreduce --->   NON SI PUò FARE  sui filesystem xfs
+
+per quanto riguarda gli altri filesystem tipo ext3/ext4 smontare prima la partizione e
+
+lanciare il seguente comando:
+
+ 
+
+lvreduce -r -L 400M /dev/rhcsa/data  ( questo comando fa diventarere data a 400MB )
+
+lvreduce -r -L -100M /dev/rhcsa/data  ( questo comando la riduce di 100M )
+
+​
