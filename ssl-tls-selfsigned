@@ -1,0 +1,82 @@
+La Certification Autority (CA)
+ 
+
+ 
+
+.CRT → Indica che all'interno c'è un certificato: Può essere codificato come binario (DER) o come base-64 ascii (PEM)
+ 
+
+.CSR → E' il certificate signing request, ciò che mandi alla CA affinchè lo firmi. E' in sostanza la tua chiave pubblica insieme a una tua descrizione
+ 
+
+.KEY → E' il file che contiene la chiave. In base all'intestazione potrà essere la chiave privata, pubblica, privata encrypted. Anche la chiave può essere binaria DER o ascii PEM.
+ 
+
+.CERT ->Analogo a .crt
+ 
+
+​
+
+
+GENERARE UN CERTIFICATO SELF SIGNED
+
+
+Ogni CA dovrà possedere un root certificate. Impostata la [ca] e la [req] possiamo procedere a generare il root certificate auto firmato e le relative coppie di chiavi pubblica/privata. Tali operazioni sono rese possibili dal comanda req.
+
+La generazione della coppia chiave privata – certificato avviene con il comando:
+
+# openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/miocert.key -out /etc/ssl/certs/miocert.crt
+
+ che genererà la chiave miocert.key ed il certificato miocert.crt.
+
+la chiave privata risiede solo sul server, mentre il corrispondente certificato pubblico viene inviato ai client per l’autenticazione.
+
+
+ALTRIMENTI USARE IL COMANDO PER CREARE UN CERTIFICATO SELF-SIGNED   genkey nome_cert   ---->  fa tutto da solo
+
+
+    req indica il comando opnessl da eseguire. In questo caso, vogliamo effettuare una richiesta di emissione di certificato X.509 (X.509 CSR).
+
+
+    -x509 specifica che la richiesta CSR verrà eseguita direttamente, invece di essere trasmessa successivamente ad una CA. Questo comando permette quindi la generazione di un certificato autofirmato.
+
+
+    -nodes disabilita la richiesta di una password per l’accesso alla chiave privata. Poiché la chiave privata sarà utilizzata da Apache la presenza di una password richiederebbe l’inserimento della stessa da parte dell’utente amministratore ad ogni avvio del server.
+
+
+    -days 365 specifica la durata temporale del certificato (1 anno in questo caso). Alla scadenza il certificato andrà rigenerato.
+
+
+    -newkey rsa:2048 richiede la generazione di una chiave privata e di un certificato contemporaneamente. Inoltre, specifica l’algoritmo (RSA) e la lunghezza della chiave (2048 bit).
+
+
+    -keyout specifica il percorso in cui salvare la chiave privata.
+
+
+    -out specifica il percorso in cui salvare il certificato.
+
+
+GENERARE UN CERTIFICATO – Certificate Signing Request
+
+ 
+
+
+Se desideri acquistare un certificato SSL valido per il singolo dominio del tuo sito internet, ad esempio nomedominio.it, occorre prima di tutto procurarsi il CSR – Certificate Signing Request (richiesta di firma del certificato).
+Il file CSR è un file generato a partire da una chiave privata necessario all'emissione di un certificato
+Dopo l’acquisto di un certificato SSL la prima cosa da fare per associarlo al dominio ed abilitarlo è la generazione del file CSR.
+Istruzioni per generare la chiave privata
+
+Generate la chiave privata (cifrata a 2048 bit) del vostro dominio:
+
+openssl genrsa -out nomedominio.it.key 2048
+
+Istruzioni per generare il CSR
+
+Infine generate il CSR con questo comando, dove userete la chiave privata precedentemente creata; vi verranno richieste alcune informazioni da fornire.
+
+openssl req -new -key nomedominio.it.key -out nomedominio.it.csr
+
+Oppure per racchiudere i 2 comandi in uno solo
+
+openssl req -new -newkey rsa:2048 -nodes -keyout tuodominio.key -out tuodominio.csr
+
