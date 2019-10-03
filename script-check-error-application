@@ -1,0 +1,17 @@
+#check_error_wildfly.sh
+#!/bin/bash
+# var
+line=1000
+log="/usr/bin/tail -n 1000 /usr/local/acotel/wildfly/standalone/log/server.log"
+# check log
+count=`/usr/bin/tail -n $line $log | /bin/grep "javax.resource.ResourceException" -c`
+
+if [ $count -ge 3 ]
+then
+        echo "CRITICAL: Java Exception Count=$count"
+                exit 2
+                else
+                        echo "OK: Java Exception Count=$count"
+                                exit 0
+                                fi
+                                exit 3
