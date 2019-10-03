@@ -1,0 +1,14 @@
+#!/bin/bash
+NOTIFY="10"
+TRUE="1"
+FTEXT='load average:'
+LOAD5MIN="$(uptime | awk -F "$FTEXT" '{ print $2 }' | cut -d, -f2 | sed 's/ //g')"
+RESULT=$(echo "$LOAD5MIN > $NOTIFY" | bc)
+if [ "$RESULT" == "$TRUE" ]; then
+    echo "High load $LOAD5MIN"
+    killall -9 httpd
+    /etc/init.d/httpd stop
+else
+echo "OK load $LOAD5MIN Restart Apache"
+    pgrep httpd || /etc/init.d/httpd pgrep httpd || /etc/init.d/httpd restart
+fi
