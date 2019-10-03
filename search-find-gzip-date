@@ -1,0 +1,6 @@
+Cerca i file delle ultime 24 ore 
+find /home/userlog/ -type f -name "*"`date -d '1 day ago' '+%Y%m%d'`"*" -exec gzip -f '{}' ';'
+
+
+Cerca tutti i file con estensione gzip e spostali su un altro server 
+find /home/userlog/ -type f -name "*.gz" -exec scp {} root@172.28.101.100:/mnt/cdr/snoopDRA \;
