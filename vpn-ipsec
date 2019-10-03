@@ -1,0 +1,39 @@
+conf t
+
+#verificare eventuali overlap (serve a vedere se abbiamo già occupato gli indirizzi ip della rete che ci forniscono) 
+sh run | i 172.29.173
+novasabt# sh run | i 172.29.173
+
+novasabt#
+access-list acl_lemf_innova_ivrea extended permit ip host 89.118.249.10 172.29.173.0  255.255.255.252 (oppure se non c'è una subnet o è una /32 access-list acl_lemf_lecce extended permit ip host 89.118.249.10 host 172.18.161.1)
+
+tunnel-group 62.110.52.90  type ipsec-l2l
+tunnel-group 62.110.52.90  ipsec-attributes
+pre-shared-key ??????
+exit
+name 62.110.52.90  Peer-Innova-Ivrea description Peer-Innova-Ivrea
+
+crypto map WANNoverca_map2 157 match address acl_lemf_innova_ivrea
+crypto map WANNoverca_map2 157 set peer Peer-Innova-Ivrea
+crypto map WANNoverca_map2 157 set transform-set ESP-3DES-SHA
+crypto map WANNoverca_map2 157 set security-association lifetime seconds 28800
+crypto map WANNoverca_map2 157 set security-association lifetime kilobytes 4608000
+
+#Uscire da conf t e salvare:
+wr mem
+wr net
+
+-------------------------------------------------------------
+
+CONFIGURAZIONE lima
+LATO LIMA:   root - rootgroup
+root@limdrmit01> netstat -nrv | grep 172.18.241.1 oppure 172.18.241.0
+route add -net   172.18.241.0/29 172.28.101.190 (oppure se non c'è una subnet o è una /32 route add -host "host destinazione" 172.28.101.190)
+ 
+vim /etc/init.d/routersadd
+
+/sbin/route add 172.18.241.0/29 172.28.101.190
+
+telnet 172.18.241.1 21
+ftp 172.29.44.1 
+route add 172.28.22.1/32 172.28.101.190
