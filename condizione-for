@@ -1,0 +1,12 @@
+Controllo risoluzione DNS du lista server 
+
+for i in $(cat /root/ListVm)
+do
+ nslookup $i
+ if [ $? -eq 0 ]
+  then
+   echo $i Ok
+  else
+   echo $i UNKNOW
+ fi
+done
