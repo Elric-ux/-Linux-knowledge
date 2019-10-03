@@ -63,3 +63,20 @@ else
         echo "CRITICAL: $file1 or $file2 modified more then $minutes min ago"
 fi
 exit 3
+
+
+#######################################################################################
+
+
+
+#!/bin/bash
+check=$(sed -n "/^$(date --date='6 minutes ago' '+%H:%M')/,$p" /home/tats/mediatrustaddon/logs/MediaTrustAddOn.log |grep 'tag_incident_summary: hours=1' -c)
+count=1
+if [[ "$check" -ge 1 ]]; then
+        echo "OK - Mediatrustaddon is OK"
+        exit 0
+fi
+if [[ "$check" = 0 ]]; then
+        echo "CRITICAL - Please check http://confluence.acotel.com/display/NOC/acous04loady88"
+        exit 2
+fi
