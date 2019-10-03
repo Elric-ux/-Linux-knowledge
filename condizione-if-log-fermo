@@ -1,0 +1,38 @@
+#!/bin/bash
+
+ 
+
+minutes=1
+path=/root/
+file1=prova.log
+
+ 
+
+        if [ `find $path -type f -mmin -$minutes -name $file1 -prune` ]
+then
+        echoi 2>/dev/null
+
+else
+        mail -s "NAGIOS FERMO" daniele.pasco@gmail.com
+fi
+        exit 3
+
+​
+
+---------------------------------------------------------------------------------------
+
+​
+
+​
+
+#!/bin/bash
+minutes=20
+path=/home/noverca/sftpimporterTIM/CDR_FULL/log/
+file1=cdr_full_import.log
+if [ `find $path -type f -mmin -$minutes -name $file1 -prune` ]
+then
+        echo "0"
+else
+       echo "1"
+fi
+exit 1
