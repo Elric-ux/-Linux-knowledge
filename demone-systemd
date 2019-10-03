@@ -1,0 +1,18 @@
+cd /etc/systemd/system
+
+vim  nome.service
+
+[Unit]
+Description=Noverca Nwatchdog
+After=
+
+[Service]
+Type=forking
+ExecStart=/home/supervisor/Nwatchdog/sh/watchdog_start.sh
+ExecStop=/home/supervisor/Nwatchdog/sh/watchdog_stop.sh
+Restart=on-failure
+User=supervisor
+Group=supervisor
+
+[Install]
+WantedBy=multi-user.target
