@@ -1,0 +1,5 @@
+rsync -avz --exclude 'dir1' source/ destination/
+
+rsync -avz --exclude '*.txt' source/ destination/
+
+rsync -avz --exclude 'dir3' source/ bobby@192.168.122.105:destination/
