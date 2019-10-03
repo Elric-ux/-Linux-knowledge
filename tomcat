@@ -1,0 +1,159 @@
+Disabilitare Selinux:
+#sed -i 's/enforcing/disabled/g' /etc/selinux/config
+reboot
+
+Aggiungere al firewall le porte 8080 e 8443 (tcp):
+
+#systemctl status firewalld
+#firewall-cmd --permanent --add-port=8080/tcp ; firewall-cmd --permanent --add-port=8443/tcp 
+#firewall-cmd --reload
+
+Installare Java 8 JDK on Centos 7:
+
+#cd /tmp 
+#wget https://www.dropbox.com/s/zzhmqnj1ay1apsv/jdk-8u144-linux-x64.tar.gz
+#tar xvzf jdk-8u144-linux-x64.tar.gz -C /opt/
+#cd /opt
+mv jdk1.8.0_144 java
+
+In alternativa è possibile installare direttamente l'.rpm, in questo caso non è necessario fare l'export della JAVA_HOME, crea in automatico
+sotto /usr/java lui le path giuste.
+
+Testare java:
+#java -version
+java version "1.8.0_144"
+Java(TM) SE Runtime Environment (build 1.8.0_144-b01)
+Java HotSpot(TM) 64-Bit Server VM (build 25.144-b01, mixed mode)
+Export variabile JAVA:
+Appendere sotto /root/.bashrc
+export JAVA_HOME=/opt/java
+export PATH=$JAVA_HOME/bin:$PATH
+#Non serve..jre sta sotto /opt/java
+export JRE_HOME=/opt/java
+export PATH=$JRE_HOME/bin:$PATH
+#source .bashrc
+
+p.s. ho provato a mettere la JAVA HOME sotto bash_profile e funziona uguale:
+In altre parole, ~/.profilee ~/.bashrcnormalmente verranno 
+letti entrambi all'avvio bash, quindi puoi inserirlo anche in entrambi.
+
+Verifica:
+#echo $JAVA_HOME
+/opt/java
+
+Installare Tomcat:
+
+#cd /tmp
+#wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.16/bin/apache-tomcat-8.5.16.tar.gz
+#tar xvzf apache-tomcat-8.5.16.tar.gz -C /opt/
+#cd /opt
+#mv apache-tomcat-8.5.16 tomcat
+#groupadd tomcat
+
+#useradd -M -s /bin/nologin -g tomcat -d /opt/tomcat tomcat
+
+#chown -R tomcat:tomcat /opt/tomcat
+
+#cd /etc/systemd/system 
+
+vi tomcat.service
+[Unit]
+Description=tomcat
+After=network.target
+[Service]
+Type=forking
+User=tomcat
+Group=tomcat
+PermissionsStartOnly=true
+LimitNOFILE=10000
+Environment=CATALINA_PID=/opt/tomcat/temp/tomcat.pid
+Environment=JAVA_HOME=/opt/java
+Environment=CATALINA_HOME=/opt/tomcat
+Environment=CATALINA_BASE=/opt/tomcat
+## JAVA_OPTS per HR ##
+Environment=JAVA_OPTS=-Dfile.encoding=ISO-8859-15 -Xms512m -Xmx3072m -Xss768m -XX:MaxMetaspaceSize=768m -Duser.language=it
+ExecStartPre=-/usr/bin/rm -rf /opt/tomcat/work/Catalina
+ExecStartPre=/usr/bin/chmod 755 -R /opt/tomcat/
+ExecStartPre=/usr/bin/chown -R tomcat. /opt/tomcat/
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/bin/kill -15
+[Install]
+WantedBy=multi-user.target
+
+tomcat.service di produzione Noverca:
+
+tomcat.service
+# Systemd unit file for tomcat
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=syslog.target network.target
+[Service]
+Type=forking
+Environment=JAVA_HOME=/usr/java/latest/jre
+Environment=CATALINA_PID=/usr/local/tomcat/temp/tomcat.pid
+Environment=CATALINA_HOME=/usr/local/tomcat
+Environment=CATALINA_BASE=/usr/local/tomcat
+Environment='CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
+Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+ExecStart=/usr/local/tomcat/bin/startup.sh
+ExecStop=/bin/kill -15 $MAINPID
+User=tomcat
+Group=tomcat
+UMask=0007
+RestartSec=10
+Restart=always
+[Install]
+WantedBy=multi-user.target
+
+p.s. in questo caso le path della JAVA_HOME e CATALINA sono diverse, in base alle esigenze
+
+
+systemctl daemon-reload 
+systemctl enable tomcat
+systemctl start tomcat
+
+
+Modifica file di configurazione:
+vim /opt/tomcat/conf/tomcat-users.xml
+Alla fine del file /opt/tomcat/conf/tomcat-users.xml  aggiungere 
+Le prime rige di solito sono già presenti 
+<!--
+  <role rolename="tomcat"/>
+  <role rolename="role1"/>
+  <user username="tomcat" password="<must-be-changed>" roles="tomcat"/>
+  <user username="both" password="<must-be-changed>" roles="tomcat,role1"/>
+  <user username="role1" password="<must-be-changed>" roles="role1"/>
+-->
+<role rolename="manager-gui"/>
+<role rolename="admin-gui"/>
+<user username="tomcat" password="tomcat" roles="manager-gui,admin-gui"/>
+</tomcat-users>
+
+Aggiungere IP abilitati:
+
+/opt/tomcat/webapps/manager/META-INF/context.xml
+Aggiungere l’IP desiderato nel parametro allow come evidenziato:
+allow="192.168.1.61|127.d+.d+.d+|::1|0:0:0:0:0:0:0:1" />
+Per il deploy ci sono due modalità:
+1) da riga di comando
+spostare il war sotto /opt/tomcat/webapps con riavvio di Tomcat oppure da 
+2) da interfaccia grafica 
+"Manage App"
+WAR file to deploy
+Select WAR file to upload 
+  
+Se si verifica l'errore 403 forbidden dal "Manager App" commentare entrambi i content.xml come segue:
+
+/usr/local/apache-tomcat-8.5.43/webapps/manager/META-INF/context.xml
+<Context antiResourceLocking="false" privileged="true" >
+<!--<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127.d+.d+.d+|::1|0:0:0:0:0:0:0:1" />-->
+
+/usr/local/apache-tomcat-8.5.43/webapps/host-manager/META-INF/context.xml
+<Context antiResourceLocking="false" privileged="true" >
+<!--<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127.d+.d+.d+|::1|0:0:0:0:0:0:0:1" />-->
+
+
+
+
