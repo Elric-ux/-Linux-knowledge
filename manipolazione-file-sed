@@ -1,0 +1,6 @@
+cercare range orario log
+ sed -n '/18:00:/ , /18:15:/p' jscp_diameter_client20171018.log
+
+
+modificare valore senza entrare in VI
+ sed -i -e 's/OK/KO/g' /var/www/html/nov31vm54.rm.it.noverca.com/lvs/index.html
