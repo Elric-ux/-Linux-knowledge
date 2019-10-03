@@ -1,0 +1,26 @@
+ssh-keygen -> genera una chiave pubblica e una privata
+
+ssh-copy-id x.x.x.x  -> copia la chiave pubblica sul server target (dove si vuole accedere in ssh)
+
+troveremo una nuova cartella /root/.ssh
+
+[root@noverca .ssh]# ls -lrt
+
+-rw-r--r--. 1 root root  176  6 set 08.41 known_hosts   -> host verso il quale si è fatto ssh
+
+-rw-r--r--. 1 root root  399 20 feb 17.23 id_rsa.pub    -> chiave pubblica generata
+
+-rw-------. 1 root root 1675 20 feb 17.23 id_rsa       -> chiave privata 
+
+
+ 
+
+Sul server target una volta lanciato il comando ssh-copy-id verrà generata sotto /root/.ssh il file
+
+authorized_keys (sarà la stessa chiave che è presente sotto id_rsa.pub nell'esempo di cui sopra)
+
+​
+
+​
+Esempio se si vuole fare accedere CLIENT.exmaple.com a SERVER.example.com su entrambi i server controllare se è presente authorized_keys
+se non lo è bisogna generare le chiavi con il comando ssh-keygen  dopo  entrare su SERVER.example.com e lanciare ssh-copy-id e l'ip del CLIENT
