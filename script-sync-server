@@ -1,0 +1,40 @@
+#!/bin/sh
+#### Script ####
+
+LOG=/var/log/sourcesync.log
+EXCLUDE=/usr/local/etc/sourcexclude.txt
+
+echo "---------------------------------------"
+echo `date` "Start SCRIPT sync Source" >> $LOG
+
+SOURCEDIR1=/var/www/html/source/kenamobile.it/www/wplive/wp-content/uploads/
+DESTDIR1=/var/www/html/source/kenamobile.it/www/wplive/wp-content/uploads/
+
+SOURCEDIR2=/var/www/html/source/kenamobile.it/www/wplive/wp-content/languages/
+DESTDIR2=/var/www/html/source/kenamobile.it/www/wplive/wp-content/languages/
+
+
+for a in 172.31.11.1 172.31.11.2 172.31.11.3 172.31.11.4 172.31.11.5 172.31.11.6 172.31.11.7 172.31.11.8 172.31.11.9 172.31.11.10 172.31.11.11
+do
+
+echo `date` "Start sync from nov31c13 to" $a  2>&1 | tee -a  $LOG
+
+sudo rsync -azv --delete --exclude-from=$EXCLUDE --rsh=ssh $SOURCEDIR1 root@$a:$DESTDIR1 2>&1 | tee -a $LOG
+sudo rsync -azv --delete --exclude-from=$EXCLUDE --rsh=ssh $SOURCEDIR2 root@$a:$DESTDIR2 2>&1 | tee -a $LOG
+
+
+echo "sync nodo ok " $a
+
+#curl http://$a/pulisci_cache/pulisci_cache2.php
+#echo
+
+echo `date` "End sync from nov31c13 to" $a 2>&1 | tee -a  $LOG
+echo "---------------------------------------"
+
+curl http://$a/pulisci_cache/pulisci_cache2.php
+echo
+
+
+done
+
+exit 0
