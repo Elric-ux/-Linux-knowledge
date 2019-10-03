@@ -37,3 +37,22 @@ vim /etc/init.d/routersadd
 telnet 172.18.241.1 21
 ftp 172.29.44.1 
 route add 172.28.22.1/32 172.28.101.190
+
+
+----------------------------------------------------------------------------------
+
+
+clear configure tunnel-group 85.35.180.58 (vecchio peer)
+no name 85.35.180.58 Peer-RT-TorreAnnunziata description Peer-RT-TorreAnnunziata
+ 
+e poi:
+ 
+ name 93.42.161.206 Peer-RT-TorreAnnunziata description Peer-RT-TorreAnnunziata
+tunnel-group 93.42.161.206 type ipsec-l2l
+tunnel-group 93.42.161.206 ipsec-attributes
+pre-shared-key fDv3JRsf
+ 
+no crypto map WANNoverca_map2 92 set peer 85.35.180.58    -> ricordarsi il progressivo 
+crypto map WANNoverca_map2 92 set peer 93.42.161.206       -> ricordarsi il progressivo 
+ 
+clear crypto isakmp sa (nel caso in cui ci sono problemi) 
