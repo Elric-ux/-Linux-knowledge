@@ -1,0 +1,25 @@
+Significato degli argomenti più usati:
+
+-i : ascolta solo su un'interfaccia (es:-i eth0) o tutte (es: -i any)
+-S : stampa la sequenza di numeri assoluti
+-w : nomefile: salva l'output in un file. Utile per poter essere analizzato successivamente. Aperto con wireshark, per esempio, può fornire informazioni più dettagliate e comprensibili
+-v, -vv, -vvv : incrementa il numero delle infomazioni.
+-X : mostra il contenuto dei pacchetti sia in esadecimale che in ASCII
+
+tcpdump -i any port 5060 -Xs0 -w /root/test.pcap
+tcpdump -i any host 172.29.103.62
+tcpdump -i any -Xs0 not port 22 -w /root/200.pcap
+tcpdump -i any port 53 -Xs0 -w /root/dns_03.pcap
+tcpdump -i any -Xs0 host 172.34.12.9 or host 172.34.12.10 -w /root/toolmnp2.pcap
+tcpdump -i any -Xs0 host 172.31.13.29 and not host 10.20.30.152 -w /root/reverse.pcap
+tcpdump -i any host 172.31.13.29 and not host 10.20.30.152
+tcpdump -i any host 192.168.192.22 and not port 22
+tcpdump -XS -vvv -i any port 8081
+tcpdump -Xs1200 -i any host 194.152.48.151 or 194.152.48.150
+tcpdump -i any net 5.171.236.0/22 and  tcp
+tcpdump -i any net 5.171.236.0/22 and  udp
+tcpdump -Xs1200 -i any port 3868 -w dum
+tcpdump -i any -Xs0 udp port 5060 -w /root/prova30ottobre.pcap
+tcpdump host 10.0.0.100 and not port 80
+tcpdump -i any -Xs0 host 10.2.0.4 -w /root/enuanweb.pcap
+tcpdump -i ppp0 -c 50 (Visualizza 50 pacchetti (-c 50) sull’interfaccia ppp0 (-i ppp0) e poi esce)
