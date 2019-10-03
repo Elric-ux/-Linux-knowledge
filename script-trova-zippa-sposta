@@ -1,0 +1,69 @@
+#/bin/bash
+find /mnt/ha0/var/ftp/mach_ftp_client -name "*DWD" -type f -mmin +1440 -exec mv '{}' /mnt/ha0/var/ftp/mach_ftp_client_tmp ;                                                                                                                    
+cd /mnt/ha0/var/ftp/mach_ftp_client_tmp ; sleep 1 ; gzip *.DWD
+
+######################################################################
+
+find /mnt/ha0/var/ftp/mach_ftp_client_tmp -name "*.gz" -type f -exec scp -l 40000 {} admin@172.22.0.7:/share/MD0_DATA/TRAFFICO_NRTRDE ; -exec rm {}  ;                                                        
+
+######################################################################
+
+#!/bin/sh
+st_date=`date +%Y%m%d`
+old_date=`date -d "31 day ago" +%Y%m%d`
+DIR1=/mnt/ha0/var/ftp/noitel/cdr
+DIR2=/mnt/ha0/var/ftp/ics/cdr
+DIR3=/mnt/ha0/var/ftp/digitel/cdr
+DIR4=/mnt/ha0/var/ftp/nextus/cdr
+DIR5=/mnt/ha0/var/ftp/rabona/cdr
+DIR6=/mnt/ha0/var/ftp/aem/cdr
+LOG=/var/log/script_copia.log
+echo `date -d 1+' now ' +%c` $LABEL "Start script" >> $LOG
+gzip -r $DIR1/NOITEL_*_$old_date*.dwd
+gzip -r $DIR2/ICS_*_$old_date*
+gzip -r $DIR3/DIGITEL_*_$old_date*.dwd
+gzip -r $DIR4/NEXTUS_*_$old_date*.DWD
+gzip -r $DIR5/RABONA_*_$old_date*.DWD
+gzip -r $DIR6/AEM_*_$old_date*
+echo `date -d 1+' now ' +%c` $LABEL "End GZIP" >> $LOG
+echo `date -d 1+' now ' +%c` $LABEL "Start copy" >> $LOG
+find /mnt/ha0/var/ftp/noitel/cdr -name "NOITEL_*" -type f -mtime +30 -exec scp -l 40000 {} admin@172.22.0.7:/share/MD0_DATA/CDR_MVNO/noitel ;  -exec rm {}  ;
+find /mnt/ha0/var/ftp/ics/cdr -name "ICS_*" -type f -mtime +30 -exec scp -l 40000 {} admin@172.22.0.7:/share/MD0_DATA/CDR_MVNO/ics ;  -exec rm {}  ;
+find /mnt/ha0/var/ftp/digitel/cdr -name "DIGITEL_*" -type f -mtime +30 -exec scp -l 40000 {} admin@172.22.0.7:/share/MD0_DATA/CDR_MVNO/digitel ;  -exec rm {}  ;
+find /mnt/ha0/var/ftp/nextus/cdr -name "NEXTUS_*" -type f -mtime +30 -exec scp -l 40000 {} admin@172.22.0.7:/share/MD0_DATA/CDR_MVNO/nextus ;  -exec rm {}  ;
+find /mnt/ha0/var/ftp/rabona/cdr -name "RABONA_*" -type f -mtime +30 -exec scp -l 40000 {} admin@172.22.0.7:/share/MD0_DATA/CDR_MVNO/rabona ;  -exec rm {}  ;
+find /mnt/ha0/var/ftp/aem/cdr -name "AEM_*" -type f -mtime +30 -exec scp -l 40000 {} admin@172.22.0.7:/share/MD0_DATA/CDR_MVNO/aem ;  -exec rm {}  ;
+echo `date -d 1+' now ' +%c` $LABEL "End copy" >> $LOG
+exit 0
+
+######################################################################
+
+
+#!/bin/sh
+st_date=`date +%Y%m%d`
+old_date=`date -d "1 day ago" +%Y-%m-%d`
+DIRBKP=/var/log/conntrack
+LOG=/var/log/zip_natt_log
+echo `date -d 1+' now ' +%c` $LABEL "Start script" >> $LOG
+gzip -r $DIRBKP/natt_$old_date.log
+echo `date -d 1+' now ' +%c` $LABEL "End GZIP" >> $LOG
+exit 0
+
+######################################################################
+
+
+#!/bin/bash
+find /var/log/conntrack -name "natt_2014-*" -type f -mtime +90 -exec scp -l 40000 {} admin@172.22.0.7:/share/MD0_DATA/FW_Conntrack/nov28fw01 ;
+find /var/log/conntrack -name "natt_2014-*" -type f -mtime +90 -exec rm {}  ;
+
+
+######################################################################
+
+
+#!/bin/bash
+LOG=/var/log/mirroring.log
+rsync -azv  --rsh=ssh /home/supervisor/fmci/archive/VOIP_INOVERCA admin@172.22.0.7:/share/MD0_DATA/CDR/ >> $LOG
+rsync -azv  --rsh=ssh /home/supervisor/fmci/archive/VOIP admin@172.22.0.7:/share/MD0_DATA/CDR/ >> $LOG
+rsync -azv  --rsh=ssh /home/supervisor/fmci/archive/mach_ftp_client admin@172.22.0.7:/share/MD0_DATA/CDR/ >> $LOG
+rsync -azv  --rsh=ssh /home/supervisor/fmci/archive/ncr admin@172.22.0.7:/share/MD0_DATA/CDR/ >> $LOG
+rsync -azv  --rsh=ssh /home/supervisor/fmci/archive/syniverse_ftp_client admin@172.22.0.7:/share/MD0_DATA/CDR/ >> $LOG
