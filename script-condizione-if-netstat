@@ -1,0 +1,58 @@
+#!/bin/sh
+num_conn=`netstat -na |grep 'EST'|grep 6379 -c`
+
+        if [ $num_conn -ge 2 ]
+then
+        #echo "connessioni Redis maggiori o uguali a 2"
+echo "0"
+exit 0
+fi
+        #echo "connessioni Redis maggiori o uguali a 2"
+echo "2"
+exit 1
+
+##############################################################
+
+#!/bin/sh
+num_conn=`netstat -na |grep 'EST'|grep 193.27.2.30 -c`
+SYN=`netstat -na |grep 'SYN'|grep 193.27.2.30 -c`
+CLOSE=`netstat -na |grep 'CLOSE'|grep 193.27.2.30 -c`
+
+        if [ $SYN -ge 1 ]
+then
+        echo "2"
+exit 1
+fi
+        if [ $CLOSE -ge 1 ]
+then
+        echo "2"
+exit 2
+fi
+        if [ $num_conn -ge 1 ]
+ then
+        #echo "connessioni con Tweakker maggiori o uguali a 1"
+echo "0"
+exit 0
+fi
+# non ci sono connessioni
+echo "2"
+
+
+#################################################################################
+
+
+#conn_telecom_B.sh
+#!/bin/sh
+num_conn=`netstat -na |grep 'EST'|grep 62.77.63.105:16275 -c`
+if [ $num_conn -ge 10 ]
+then
+#echo "connessioni con 62.77.63.104 maggiori o uguali a 10"
+echo "0"
+exit 0
+fi
+if [ $num_conn -le 3 ]
+then
+#echo "connessioni con 62.77.63.104 minori o uguali a 3"
+echo "2"
+exit 1
+fi
