@@ -36,3 +36,30 @@ else
        echo "1"
 fi
 exit 1
+
+
+
+##################################################################################
+
+
+#!/bin/bash
+minutes=1
+path=/home/tats/log
+file1=zeromq_01.log
+file2=zeromq_02.log
+zeromq_01=$path/$file1
+zeromq_02=$path/$file2
+
+if [ ! -f $zeromq_01  ] ||  [ ! -f $zeromq_02  ]
+then
+        echo "CRITICAL: zeromq_01 or zeromq_02 not exist!! Check /home/tats/log/"
+        exit 2
+fi
+
+if [ `find $path -type f -mmin -$minutes -name $file1 -prune` ] || [ `find $path -type f -mmin -$minutes -name $file2 -prune` ]
+then
+        echo "OK: $file1 and $file2 modified less then $minutes min ago"
+else
+        echo "CRITICAL: $file1 or $file2 modified more then $minutes min ago"
+fi
+exit 3
