@@ -1,0 +1,95 @@
+.---------------- [m]inute: minuto (0 - 59)
+|   .------------- [h]our: ora (0 - 23)
+|  | .---------- [d]ay of month: giorno del mese (1 - 31)
+|  | |   .------- [mon]th: mese (1 - 12) OPPURE jan,feb,mar,apr...
+|  | |  | .---- [w]eek day: giorno della settimana (0 - 6) (domenica=0 o 7)  OPPURE sun,mon,tue,wed,thu,fri,sat
+|  | |  | |
+
+*  * *  * * comando da eseguire
+
+ 
+
+​
+
+é possibile privare ad un utente l’uso del crontab basta inserire lo username nel file   /etc/cron.deny
+
+​
+
+​
+
+ESEMPI CRON:
+
+​
+
+*/2 * * * * touch /tmp/prova_cron    ( ogni 2 minuti )
+
+​
+
+*/30 * * * * touch /tmp/prova_cron ( ogni 30 minuti )
+
+​
+
+* */8 * * * touch /tmp/prova_cron  ( ogni 8 ore )
+
+​
+
+10 20 * * * touch /tmp/prova_cron  ( alle ore 20:10 )
+
+​
+
+10 10 */7 * * touch /tmp/prova_cron  ( ogni 7 giorni alle ore 10:10 )
+
+​
+
+0 0 * * 6   touch /tmp/prova_cron  ( a mezzanotti di ogni sabato )
+
+​
+
+0 9,23 * * * /root/mybackup.sh
+
+
+Lo script viene eseguito alle ore 09.00 e alle ore 23.00 tutti i giorni
+
+​
+
+0 7 * * 0 /root/mybackup.sh
+
+
+Lo script viene eseguito alle ore 07.00 della domenica
+
+​
+
+0 7 * 5 6 /root/mybackup.sh
+
+
+Lo script viene eseguito alle ore 07.00 ogni sabato del mese di maggio
+
+​
+
+15 7 * 5 6 /root/mybackup.sh
+
+
+Lo script viene eseguito alle ore 07.15, ogni sabato di maggio
+
+​
+
+* * * * * /root/mybackup.sh
+
+
+Lo script viene eseguito ogni minuto
+
+​
+
+*/5 * * * * /root/mybackup.sh
+
+
+Lo script viene eseguito ogni 5 minuti
+
+​
+
+0 17 * * 1,5 /root/mybackup.sh
+
+
+Lo script viene eseguito allre ore 17.00 di lunedì e domenica
+
+​
