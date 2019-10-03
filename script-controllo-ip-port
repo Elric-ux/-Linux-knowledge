@@ -1,0 +1,12 @@
+#!/bin/bash
+REM_IP="10.80.4.115"
+REM_PORT=9092
+if (nc -z -w 3 $REM_IP $REM_PORT >/dev/null)
+then
+        echo "OK: KAFKA IP $REM_IP raggiungibile su porta $REM_PORT"
+        exit 0
+else
+        echo "CRITICAL: KAFKA IP $REM_IP non raggiungibile su porta $REM_PORT!!!"
+        exit 2
+fi
+exit 3
