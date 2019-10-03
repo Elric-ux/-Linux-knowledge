@@ -1,0 +1,5 @@
+sul file sshd_config --->  rootPermitLogin no
+
+Cmnd_Alias SUDO = /usr/bin/su -
+## IT
+%it-noverca     ALL = NOPASSWD: NETWORKING, SOFTWARE, SERVICES, STORAGE, DELEGATING, PROCESSES, LOCATE, DRIVERS, SUDO, NOC
